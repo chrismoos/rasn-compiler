@@ -141,13 +141,6 @@ impl Validator {
                 };
             }
             if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
-                if let Err(mut e) = tld.collect_supertypes(&self.tlds) {
-                    e.contextualize(&key);
-                    warnings.push(e.into());
-                }
-                self.tlds.insert(k, tld);
-            }
-            if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
                 if let Err(mut e) = tld.mark_recursive(&self.tlds) {
                     e.contextualize(&key);
                     warnings.push(e.into());
@@ -161,6 +154,18 @@ impl Validator {
                 .is_some_and(|m| visited_headers.contains(&m.borrow().name).not())
             {
                 self.fill_in_associated_type_imports(key, &mut visited_headers);
+            }
+        }
+
+        // DEFAULT values are typed from linked constraints, so link every definition first.
+        let keys = self.tlds.keys().cloned().collect::<Vec<_>>();
+        for key in keys {
+            if let Some((k, mut tld)) = self.tlds.remove_entry(&key) {
+                if let Err(mut e) = tld.collect_supertypes(&self.tlds) {
+                    e.contextualize(&key);
+                    warnings.push(e.into());
+                }
+                self.tlds.insert(k, tld);
             }
         }
 

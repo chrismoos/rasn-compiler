@@ -137,3 +137,29 @@ e2e_pdu!(
         }
     "#
 );
+
+e2e_pdu!(
+    integer_default_with_symbolic_bound,
+    r#"
+        maxChannels INTEGER ::= 6
+
+        NumberOfChannels ::= INTEGER (1..maxChannels)
+
+        UplinkInfo ::= SEQUENCE {
+            channels NumberOfChannels DEFAULT 1
+        }
+    "#
+);
+
+e2e_pdu!(
+    integer_default_with_symbolic_bound_in_reverse_name_order,
+    r#"
+        maxChannels INTEGER ::= 6
+
+        ZuluChannels ::= INTEGER (1..maxChannels)
+
+        AlphaUplink ::= SEQUENCE {
+            channels ZuluChannels DEFAULT 1
+        }
+    "#
+);

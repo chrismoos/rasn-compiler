@@ -1,0 +1,43 @@
+---
+source: rasn-compiler-tests/tests/edge_cases.rs
+description: "\n        maxChannels INTEGER ::= 6\n\n        ZuluChannels ::= INTEGER (1..maxChannels)\n\n        AlphaUplink ::= SEQUENCE {\n            channels ZuluChannels DEFAULT 1\n        }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags)]
+    pub struct AlphaUplink {
+        #[rasn(default = "alpha_uplink_channels_default")]
+        pub channels: ZuluChannels,
+    }
+    impl AlphaUplink {
+        pub fn new(channels: ZuluChannels) -> Self {
+            Self { channels }
+        }
+    }
+    impl std::default::Default for AlphaUplink {
+        fn default() -> Self {
+            Self {
+                channels: alpha_uplink_channels_default(),
+            }
+        }
+    }
+    fn alpha_uplink_channels_default() -> ZuluChannels {
+        ZuluChannels(1)
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(delegate, value("1..=6"))]
+    pub struct ZuluChannels(pub u8);
+    pub static MAX_CHANNELS: LazyLock<Integer> = LazyLock::new(|| Integer::from(6i128));
+}

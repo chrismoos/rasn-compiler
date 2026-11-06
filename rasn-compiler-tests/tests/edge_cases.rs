@@ -126,3 +126,14 @@ e2e_pdu!(
         LDAPString ::= [UNIVERSAL 4] IMPLICIT UTF8String
     "#
 );
+
+e2e_pdu!(
+    default_impl_for_acronym_type_name,
+    r#"
+        Timer ::= ENUMERATED { ms100, ms200 }
+
+        UE-ConnTimers ::= SEQUENCE {
+            timer Timer DEFAULT ms100
+        }
+    "#
+);

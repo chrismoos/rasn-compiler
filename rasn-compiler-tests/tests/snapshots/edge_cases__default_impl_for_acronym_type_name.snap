@@ -1,0 +1,45 @@
+---
+source: rasn-compiler-tests/tests/edge_cases.rs
+description: "\n        Timer ::= ENUMERATED { ms100, ms200 }\n\n        UE-ConnTimers ::= SEQUENCE {\n            timer Timer DEFAULT ms100\n        }\n    "
+---
+Generated:
+#[allow(
+    non_camel_case_types,
+    non_snake_case,
+    non_upper_case_globals,
+    unused,
+    clippy::too_many_arguments
+)]
+pub mod test_module {
+    extern crate alloc;
+    use core::borrow::Borrow;
+    use rasn::prelude::*;
+    use std::sync::LazyLock;
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash, Copy)]
+    #[rasn(enumerated)]
+    pub enum Timer {
+        ms100 = 0,
+        ms200 = 1,
+    }
+    #[derive(AsnType, Debug, Clone, Decode, Encode, PartialEq, Eq, Hash)]
+    #[rasn(automatic_tags, identifier = "UE-ConnTimers")]
+    pub struct UEConnTimers {
+        #[rasn(default = "ueconn_timers_timer_default")]
+        pub timer: Timer,
+    }
+    impl UEConnTimers {
+        pub fn new(timer: Timer) -> Self {
+            Self { timer }
+        }
+    }
+    impl std::default::Default for UEConnTimers {
+        fn default() -> Self {
+            Self {
+                timer: ueconn_timers_timer_default(),
+            }
+        }
+    }
+    fn ueconn_timers_timer_default() -> Timer {
+        Timer::ms100
+    }
+}
